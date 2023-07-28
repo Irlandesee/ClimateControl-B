@@ -83,6 +83,6 @@ public class Main {
 
         }catch(SQLException sqle){sqle.printStackTrace();}
          **/
-        queryHandler.selectAll(QueryHandler.tables.CITY, "country_code", "IT")
+        //queryHandler.selectAll(QueryHandler.tables.CITY, "country_code", "IT")
     }
 }

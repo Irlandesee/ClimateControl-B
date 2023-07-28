@@ -14,8 +14,8 @@ import java.util.Properties;
 public class Worker extends Thread{
 
     private String workerID;
-    private String dbUrl;
-    private Properties props;
+    private final String dbUrl;
+    private final Properties props;
 
     private Connection conn;
     public Worker(String url, Properties props, String workerID){
@@ -28,14 +28,6 @@ public class Worker extends Thread{
     }
 
     public void run(){}
-
-    private void selectAreaInteresse(String oggetto, String cond){
-        //TODO:
-    }
-
-    private void selectCentroMonitoraggio(String oggetto, String cond){
-        //TODO;
-    }
 
     public ResultSet prepAndExecuteStatement(String query, String arg, String arg2) throws SQLException{
         PreparedStatement stat = conn.prepareStatement(query);
@@ -63,7 +55,7 @@ public class Worker extends Thread{
     }
 
     public LinkedList<CentroMonitoraggio> selectAllFromCMWithCond(String fieldCond, String cond){
-        String query = "select * from centromonitoraggio where ? = ?";
+        String query = "select * from centro_monitoraggio where ? = ?";
         LinkedList<CentroMonitoraggio> cms = new LinkedList<CentroMonitoraggio>();
         try(ResultSet res = prepAndExecuteStatement(query, fieldCond, cond)){
             while(res.next()){
@@ -115,7 +107,7 @@ public class Worker extends Thread{
     }
 
     public LinkedList<AreaInteresse> selectAllFromAIWithCond(String fieldCond, String cond){
-        String query = "select * from areainteresse where ? = ?";
+        String query = "select * from area__interesse where ? = ?";
         LinkedList<AreaInteresse> areeInteresse = new LinkedList<AreaInteresse>();
         try(ResultSet res = prepAndExecuteStatement(query, fieldCond, cond)){
             while(res.next()){
@@ -154,8 +146,7 @@ public class Worker extends Thread{
         return parametriClimatici;
     }
 
-    public LinkedList<String> selectObjFromCityWithCond(String oggetto, String fieldCond, String cond){
-        String query = "select " +oggetto+ " from city where ? = ?";
+    private LinkedList<String> getQueryResult(String query, String oggetto, String fieldCond, String cond){
         LinkedList<String> objs = new LinkedList<String>();
         try(ResultSet res = prepAndExecuteStatement(query, fieldCond, cond)){
             while(res.next()){
@@ -165,45 +156,39 @@ public class Worker extends Thread{
         return objs;
     }
 
+    public LinkedList<String> selectObjFromCityWithCond(String oggetto, String fieldCond, String cond){
+        String query = "select " +oggetto+ " from city where ? = ?";
+        return getQueryResult(query, oggetto, fieldCond, cond);
+    }
+
     public LinkedList<String> selectObjFromCMWithCond(String oggetto, String fieldCond, String cond){
-        String query = "select " +oggetto+ " from centromonitoraggio where ? = ?";
-        LinkedList<String> objs = new LinkedList<String>();
-        try(ResultSet res = prepAndExecuteStatement(query, fieldCond, cond)){
-            while(res.next()){
-                objs.add(res.getString(oggetto));
-            }
-        }catch(SQLException sqle){sqle.printStackTrace(); return null;}
-        return objs;
+        String query = "select " +oggetto+ " from centro_monitoraggio where ? = ?";
+        return getQueryResult(query, oggetto, fieldCond, cond);
     }
 
     public LinkedList<String> selectObjFromOPWithCond(String oggetto, String fieldCond, String cond){
         String query = "select " +oggetto+ " from operatore where ? = ?";
-        //TODO
-        return null;
+        return getQueryResult(query, oggetto, fieldCond, cond);
     }
 
     public LinkedList<String> selectObjFromAuthOPWithCond(String oggetto, String fieldCond, String cond){
         String query = "select " +oggetto+ " from operatore_autorizzati where ? = ?";
-        //TODO
-        return null;
+        return getQueryResult(query, oggetto, fieldCond, cond);
     }
 
     public LinkedList<String> selectObjFromAIWithCond(String oggetto, String fieldCond, String cond){
-        String query = "select " + oggetto+ " from areainteresse where ? = ?";
-        //TODO
-        return null;
+        String query = "select " + oggetto+ " from area_interesse where ? = ?";
+        return getQueryResult(query, oggetto, fieldCond, cond);
     }
 
     public LinkedList<String> selectObjFromNotaWithCond(String oggetto, String fieldCond, String cond){
         String query = "select " +oggetto+ " from nota_parametro_climatico where ? = ?";
-        //TODO
-        return null;
+        return getQueryResult(query, oggetto, fieldCond, cond);
     }
 
-    public ResultSet selectObjFromPMWithCond(String oggetto, String fieldCond, String cond){
+    public LinkedList<String> selectObjFromPCWithCond(String oggetto, String fieldCond, String cond){
         String query = "select " +oggetto+ " from parametro_climatico where ? = ?";
-        //TODO
-        return null;
+        return getQueryResult(query, oggetto, fieldCond, cond);
     }
 
 }

@@ -12,15 +12,11 @@ import java.util.LinkedList;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class QueryHandler extends Thread{
-
-    //number of slaves currently active
-    private static int slaveCounter = 0;
-    private ConcurrentHashMap<String, Item> itemConcurrentMap;
+public class QueryHandler{
 
     public enum tables{
-        AREAINTERESSE,
-        CENTROMONITORAGGIO,
+        AREA_INTERESSE,
+        CENTRO_MONITORAGGIO,
         CITY,
         NOTA_PARAM_CLIMATICO,
         OPERATORE,
@@ -37,62 +33,41 @@ public class QueryHandler extends Thread{
         this.props = props;
     }
 
-    public void run(){}
-
-    //non thread-safe methods
-    private void initCache(){
-
-    }
-    //thread safe methods
-    public synchronized void printMap(){
-        this.itemConcurrentMap.forEach((key, value) -> {
-            System.out.printf("{%s} -> {%d}\n", value.getID(), value.getVal());
-        });
-    }
-
     public void selectObjectWithCond(String oggetto, tables table, String fieldCond, String cond){
         switch(table){
             case CITY -> {
                 Worker w = new Worker(dbUrl, props, "workerCity");
-                try(ResultSet res = w.selectObjFromCityWithCond(oggetto, fieldCond, cond)){
-                    //TODO
-                }catch(SQLException sqle){sqle.printStackTrace();}
+                LinkedList<String> res = w.selectObjFromCityWithCond(oggetto, fieldCond, cond);
+                res.forEach(System.out::println);
             }
-            case CENTROMONITORAGGIO -> {
+            case CENTRO_MONITORAGGIO -> {
                 Worker w = new Worker(dbUrl, props, "workerCM");
-                try(ResultSet res = w.selectObjFromCMWithCond(oggetto, fieldCond, cond)){
-                    //TODO
-                }catch(SQLException sqle){sqle.printStackTrace();}
+                LinkedList<String> res = w.selectObjFromCMWithCond(oggetto, fieldCond, cond);
+                res.forEach(System.out::println);
             }
             case OPERATORE -> {
                 Worker w = new Worker(dbUrl, props, "workerOP");
-                try(ResultSet res = w.selectObjFromOPWithCond(oggetto, fieldCond, cond)){
-                    //TODO
-                }catch(SQLException sqle){sqle.printStackTrace();}
+                LinkedList<String> res = w.selectObjFromOPWithCond(oggetto, fieldCond, cond);
+                res.forEach(System.out::println);
             }
             case OP_AUTORIZZATO -> {
                 Worker w = new Worker(dbUrl, props, "workerAuthOP");
-                try(ResultSet res = w.selectObjFromAuthOPWithCond(oggetto, fieldCond, cond)){
-                    //TODO
-                }catch(SQLException sqle){sqle.printStackTrace();}
+                LinkedList<String> res = w.selectObjFromAuthOPWithCond(oggetto, fieldCond, cond);
+                res.forEach(System.out::println);
             }
-            case AREAINTERESSE -> {
+            case AREA_INTERESSE -> {
                 Worker w = new Worker(dbUrl, props, "workerAI");
-                try(ResultSet res = w.selectObjFromAIWithCond(oggetto, fieldCond, cond)){
-                    //TODO
-                }catch(SQLException sqle){sqle.printStackTrace();}
+                LinkedList<String> res = w.selectObjFromAIWithCond(oggetto, fieldCond, cond);
+                res.forEach(System.out::println);
             }
             case NOTA_PARAM_CLIMATICO -> {
                 Worker w = new Worker(dbUrl, props, "workerNota");
-                try(ResultSet res = w.selectObjFromNotaWithCond(oggetto, fieldCond, cond)){
-                    //TODO
-                }catch(SQLException sqle){sqle.printStackTrace();}
+                //TODO
             }
             case PARAM_CLIMATICO -> {
                 Worker w = new Worker(dbUrl, props, "workerPM");
-                try(ResultSet res = w.selectObjFromPMWithCond(oggetto, fieldCond, cond)){
-                    //TODO
-                }catch(SQLException sqle){sqle.printStackTrace();}
+                LinkedList<String> res = w.selectObjFromPCWithCond(oggetto, fieldCond, cond);
+                res.forEach(System.out::println);
             }
         }
 
@@ -105,7 +80,7 @@ public class QueryHandler extends Thread{
                 LinkedList<City> cities = w.selectAllFromCityWithCond(fieldCond, cond);
                 cities.forEach(System.out::println);
             }
-            case CENTROMONITORAGGIO -> {
+            case CENTRO_MONITORAGGIO -> {
                 Worker w = new Worker(dbUrl, props, "workerCM");
                 LinkedList<CentroMonitoraggio> cms = w.selectAllFromCMWithCond(fieldCond, cond);
                 cms.forEach(System.out::println);
@@ -120,7 +95,7 @@ public class QueryHandler extends Thread{
                 LinkedList<OperatoreAutorizzato> operatoriAutorizzati = w.selectAllFromAuthOpWithCond(fieldCond, cond);
                 operatoriAutorizzati.forEach(System.out::println);
             }
-            case AREAINTERESSE -> {
+            case AREA_INTERESSE -> {
                 Worker w = new Worker(dbUrl, props, "workerAI");
                 LinkedList<AreaInteresse> areeInteresse = w.selectAllFromAIWithCond(fieldCond, cond);
                 areeInteresse.forEach(System.out::println);
