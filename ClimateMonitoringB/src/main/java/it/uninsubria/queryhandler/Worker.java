@@ -29,17 +29,16 @@ public class Worker extends Thread{
 
     public void run(){}
 
-    public ResultSet prepAndExecuteStatement(String query, String arg, String arg2) throws SQLException{
+    public ResultSet prepAndExecuteStatement(String query, String arg) throws SQLException{
         PreparedStatement stat = conn.prepareStatement(query);
         stat.setString(1, arg);
-        stat.setString(2, arg2);
         return stat.executeQuery();
     }
 
     public LinkedList<City> selectAllFromCityWithCond(String fieldCond, String cond){
-        String query = "select * from city where ? = ?";
+        String query = "select * from city where " + fieldCond + " = ?";
         LinkedList<City> cities = new LinkedList<City>();
-        try(ResultSet res = prepAndExecuteStatement(query, fieldCond, cond)){
+        try(ResultSet res = prepAndExecuteStatement(query, cond)){
             while(res.next()){
                 City temp = new City(
                         res.getString("geoname_id"),
@@ -55,9 +54,9 @@ public class Worker extends Thread{
     }
 
     public LinkedList<CentroMonitoraggio> selectAllFromCMWithCond(String fieldCond, String cond){
-        String query = "select * from centro_monitoraggio where ? = ?";
+        String query = "select * from centro_monitoraggio where " + fieldCond + " = ?";
         LinkedList<CentroMonitoraggio> cms = new LinkedList<CentroMonitoraggio>();
-        try(ResultSet res = prepAndExecuteStatement(query, fieldCond, cond)){
+        try(ResultSet res = prepAndExecuteStatement(query, cond)){
             while(res.next()){
                 CentroMonitoraggio cm = new CentroMonitoraggio(
                         res.getString("centroid"),
@@ -72,9 +71,9 @@ public class Worker extends Thread{
     }
 
     public LinkedList<Operatore> selectAllFromOpWithCond(String fieldCond, String cond){
-        String query = "select * from operatore where ? = ?";
+        String query = "selct * from operatore where " + fieldCond + " = ?";
         LinkedList<Operatore> operatori = new LinkedList<Operatore>();
-        try(ResultSet res = prepAndExecuteStatement(query, fieldCond, cond)){
+        try(ResultSet res = prepAndExecuteStatement(query, cond)){
             while(res.next()){
                 Operatore op = new Operatore(
                         res.getString("nome"),
@@ -92,9 +91,9 @@ public class Worker extends Thread{
     }
 
     public LinkedList<OperatoreAutorizzato> selectAllFromAuthOpWithCond(String fieldCond, String cond){
-        String query = "select * from operatore_autorizzati where ? = ?";
+        String query = "select * from operatore_autorizzati where " + fieldCond + " = ?";
         LinkedList<OperatoreAutorizzato> opAutorizzati = new LinkedList<OperatoreAutorizzato>();
-        try(ResultSet res = prepAndExecuteStatement(query, fieldCond, cond)){
+        try(ResultSet res = prepAndExecuteStatement(query, cond)){
             while(res.next()){
                 OperatoreAutorizzato authOp = new OperatoreAutorizzato(
                         res.getString("codice_fiscale"),
@@ -107,16 +106,16 @@ public class Worker extends Thread{
     }
 
     public LinkedList<AreaInteresse> selectAllFromAIWithCond(String fieldCond, String cond){
-        String query = "select * from area__interesse where ? = ?";
+        String query = "select * from area_interesse where " + fieldCond + " = ?";
         LinkedList<AreaInteresse> areeInteresse = new LinkedList<AreaInteresse>();
-        try(ResultSet res = prepAndExecuteStatement(query, fieldCond, cond)){
+        try(ResultSet res = prepAndExecuteStatement(query, cond)){
             while(res.next()){
                 AreaInteresse ai = new AreaInteresse(
                         res.getString("areaid"),
                         res.getString("denominazione"),
                         res.getString("stato"),
-                        res.getFloat("latitude"),
-                        res.getFloat("longitude")
+                        res.getFloat("latitudine"),
+                        res.getFloat("longitudine")
                 );
                 areeInteresse.add(ai);
             }
@@ -130,9 +129,9 @@ public class Worker extends Thread{
     }
 
     public LinkedList<ClimateParameter> selectAllFromCPWithCond(String fieldCond, String cond){
-        String query = "select * from parametro_climatico where ? = ?";
+        String query = "select * from parametro_climatico where " + fieldCond + " = ?";
         LinkedList<ClimateParameter> parametriClimatici = new LinkedList<ClimateParameter>();
-        try(ResultSet res = prepAndExecuteStatement(query, fieldCond, cond)){
+        try(ResultSet res = prepAndExecuteStatement(query, cond)){
             while(res.next()){
                 ClimateParameter cp = new ClimateParameter(
                         res.getString("parameterid"),
@@ -146,9 +145,9 @@ public class Worker extends Thread{
         return parametriClimatici;
     }
 
-    private LinkedList<String> getQueryResult(String query, String oggetto, String fieldCond, String cond){
+    private LinkedList<String> getQueryResult(String query, String oggetto, String cond){
         LinkedList<String> objs = new LinkedList<String>();
-        try(ResultSet res = prepAndExecuteStatement(query, fieldCond, cond)){
+        try(ResultSet res = prepAndExecuteStatement(query, cond)){
             while(res.next()){
                 objs.add(res.getString(oggetto));
             }
@@ -157,38 +156,38 @@ public class Worker extends Thread{
     }
 
     public LinkedList<String> selectObjFromCityWithCond(String oggetto, String fieldCond, String cond){
-        String query = "select " +oggetto+ " from city where ? = ?";
-        return getQueryResult(query, oggetto, fieldCond, cond);
+        String query = "select " +oggetto+ " from city where "+ fieldCond + " = ?";
+        return getQueryResult(query, oggetto, cond);
     }
 
     public LinkedList<String> selectObjFromCMWithCond(String oggetto, String fieldCond, String cond){
-        String query = "select " +oggetto+ " from centro_monitoraggio where ? = ?";
-        return getQueryResult(query, oggetto, fieldCond, cond);
+        String query = "select " +oggetto+ " from centro_monitoraggio where "+ fieldCond + " = ?";
+        return getQueryResult(query, oggetto, cond);
     }
 
     public LinkedList<String> selectObjFromOPWithCond(String oggetto, String fieldCond, String cond){
-        String query = "select " +oggetto+ " from operatore where ? = ?";
-        return getQueryResult(query, oggetto, fieldCond, cond);
+        String query = "select " +oggetto+ " from operatore where "+ fieldCond + " = ?";
+        return getQueryResult(query, oggetto, cond);
     }
 
     public LinkedList<String> selectObjFromAuthOPWithCond(String oggetto, String fieldCond, String cond){
-        String query = "select " +oggetto+ " from operatore_autorizzati where ? = ?";
-        return getQueryResult(query, oggetto, fieldCond, cond);
+        String query = "select " +oggetto+ " from operatore_autorizzati where "+ fieldCond + " = ?";
+        return getQueryResult(query, oggetto, cond);
     }
 
     public LinkedList<String> selectObjFromAIWithCond(String oggetto, String fieldCond, String cond){
-        String query = "select " + oggetto+ " from area_interesse where ? = ?";
-        return getQueryResult(query, oggetto, fieldCond, cond);
+        String query = "select " +oggetto+ " from area_interesse where "+ fieldCond + " = ?";
+        return getQueryResult(query, oggetto, cond);
     }
 
     public LinkedList<String> selectObjFromNotaWithCond(String oggetto, String fieldCond, String cond){
-        String query = "select " +oggetto+ " from nota_parametro_climatico where ? = ?";
-        return getQueryResult(query, oggetto, fieldCond, cond);
+        String query = "select " +oggetto+ " from nota_parametro_climatico where "+ fieldCond + " = ?";
+        return getQueryResult(query, oggetto, cond);
     }
 
     public LinkedList<String> selectObjFromPCWithCond(String oggetto, String fieldCond, String cond){
-        String query = "select " +oggetto+ " from parametro_climatico where ? = ?";
-        return getQueryResult(query, oggetto, fieldCond, cond);
+        String query = "select " +oggetto+ " from parametro_climatico where "+ fieldCond + " = ?";
+        return getQueryResult(query, oggetto, cond);
     }
 
 }
